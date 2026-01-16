@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing import image
 import numpy as np
@@ -54,8 +54,10 @@ def training():
 def contact():
     return render_template('contact.html')
 
-@app.route('/predict', methods=['POST'])
+@app.route('/predict', methods=['GET', 'POST'])
 def upload():
+    if request.method == 'GET':
+        return redirect('/')
     file = request.files.get('file')
     if not file:
         return render_template('index.html', prediction="No file uploaded")
@@ -74,3 +76,4 @@ def upload():
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
+
