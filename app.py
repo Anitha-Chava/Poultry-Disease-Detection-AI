@@ -7,8 +7,15 @@ from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 
-# Load trained model
-model = load_model("healthy_vs_rotten_new.h5")
+# ---------- MODEL (LAZY LOAD) ----------
+model = None
+
+def get_model():
+    global model
+    if model is None:
+        model = load_model("healthy_vs_rotten_new.h5")
+    return model
+# --------------------------------------
 
 # MUST match training class indices
 classes = [
@@ -22,7 +29,8 @@ UPLOAD_FOLDER = 'static/uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 def predict(img_path):
-    img = image.load_img(img_path, target_size=(224, 224))
+    model = get_model()
+    img = image.load_img(img_path, target_size=(160, 160))  # reduced size
     arr = image.img_to_array(img) / 255.0
     arr = np.expand_dims(arr, axis=0)
     pred = model.predict(arr)[0]
