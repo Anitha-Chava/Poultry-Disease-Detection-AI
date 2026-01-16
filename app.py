@@ -64,5 +64,5 @@ def upload():
 # ---------------------------------------- #
 
 if __name__ == '__main__':
-    # Turn off auto-reloader to avoid blinking
-    app.run(debug=False, use_reloader=False)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
